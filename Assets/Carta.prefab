@@ -95,8 +95,8 @@ GameObject:
   - component: {fileID: 5125279850284146279}
   - component: {fileID: 8396993661004269626}
   - component: {fileID: 1948250602695144185}
-  - component: {fileID: 7476015274448858258}
   - component: {fileID: 3514038221425642714}
+  - component: {fileID: 5632569361518958892}
   m_Layer: 0
   m_Name: Carta
   m_TagString: Untagged
@@ -191,20 +191,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7476015274448858258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4760325585725733407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab7b74d3ea1d8c40a7ecc7ef4ab82c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoperta: 0
-  suonoCarta: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
 --- !u!82 &3514038221425642714
 AudioSource:
   m_ObjectHideFlags: 0
@@ -301,3 +287,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5632569361518958892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4760325585725733407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5cd2f795e73484ea2d20a81b7fdd06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uncoverd: 0
+  cardSound: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}

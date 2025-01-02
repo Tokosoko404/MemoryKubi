@@ -7,14 +7,14 @@ using UnityEngine.SceneManagement;
 [Serializable]
 public class GameManager : MonoBehaviour
 {
-    public GameObject prefabCarta;
+    public GameObject cardPrefab;
     public Transform pivot;
-    public List<Material> materialiCarte;
-    public List<Material> materialiDaDare;
+    public List<Material> cardMaterial;
+    public List<Material> materialsToGive;
     public Camera myCamera;
-    public Carta primaCartaScoperta;
-    public Carta secondaCartaScoperta;
-    public AudioClip suonoCarteUguali;
+    public Card firstCardUncovered;
+    public Card secondCardUncovered;
+    public AudioClip sameCardSound;
     //public AudioClip suonoCarteDiverse;
     //public AudioClip suonoCarteFinite;
     AudioSource audioSource;
@@ -36,28 +36,28 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreaGiocoDelMemory();
+        MadeMemoryGame();
         audioSource= GetComponent<AudioSource>();
     }
 
-    private void CreaGiocoDelMemory()
+    private void MadeMemoryGame()
     {
-        foreach (Material material in materialiCarte)
+        foreach (Material material in cardMaterial)
         {
-            materialiDaDare.Add(material);
-            materialiDaDare.Add(material);
+            materialsToGive.Add(material);
+            materialsToGive.Add(material);
         }
 
-        ShuffleMe(materialiDaDare);
+        ShuffleMe(materialsToGive);
 
 
-        for (int riga = 0; riga < 4; riga++)
+        for (int line = 0; line < 4; line++)
         {
-            for (int colonna = 0; colonna < 5; colonna++)
+            for (int column = 0; column < 5; column++)
             {
-                GameObject oggettoCreato = Instantiate(prefabCarta);
-                oggettoCreato.transform.position = pivot.position + new Vector3(colonna * 10, -riga * 15, 0);
-                oggettoCreato.GetComponent<MeshRenderer>().material = materialiDaDare[riga * 5 + colonna];
+                GameObject newObject = Instantiate(cardPrefab);
+                newObject.transform.position = pivot.position + new Vector3(column * 10, -line * 15, 0);
+                newObject.GetComponent<MeshRenderer>().material = materialsToGive[line * 5 + column];
             }
         }
 
@@ -65,37 +65,37 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (primaCartaScoperta != null && secondaCartaScoperta != null) { return; }
+        if (firstCardUncovered != null && secondCardUncovered != null) { return; }
         if (Input.GetMouseButtonDown(0))
         {
-            Ray raggioDaSparare = myCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit informazioniSulRaggio;
-            bool hoColpitoQualcosa = Physics.Raycast(raggioDaSparare, out informazioniSulRaggio);
-            if (hoColpitoQualcosa)
+            Ray ray = myCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit rayInformation;
+            bool hitSomething = Physics.Raycast(ray, out rayInformation);
+            if (hitSomething)
             {
-                Carta cartaColpita = informazioniSulRaggio.collider.gameObject.GetComponent<Carta>();
-                if (cartaColpita != null)
+                Card hitCard = rayInformation.collider.gameObject.GetComponent<Card>();
+                if (hitCard != null)
                 {
 
-                    cartaColpita.GiraCarta();
-                    if (primaCartaScoperta == null)
+                    hitCard.TurnCard();
+                    if (firstCardUncovered == null)
                     {
-                        primaCartaScoperta = cartaColpita;
+                        firstCardUncovered = hitCard;
                     }
                     else
                     {
-                        if (primaCartaScoperta != cartaColpita)
+                        if (firstCardUncovered != hitCard)
                         {
 
-                            secondaCartaScoperta = cartaColpita;
-                            Invoke(nameof(ControllaSeHoScopertoDueCarteUguali), 1);
+                            secondCardUncovered = hitCard;
+                            Invoke(nameof(CheckIfTheCardAreIdentical), 1);
                             
                             //ControllaSeHoScopertoDueCarteUguali(); errore perche se la chiaami due volte da bug
                         }
                         else
                         {
 
-                            cartaColpita.GiraCarta();
+                            hitCard.TurnCard();
                         }
                     }
                 }
@@ -105,14 +105,14 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void ControllaSeHoScopertoDueCarteUguali()
+    private void CheckIfTheCardAreIdentical()
     {
-        if (primaCartaScoperta.GetComponent<MeshRenderer>().sharedMaterial == secondaCartaScoperta.GetComponent<MeshRenderer>().sharedMaterial)
+        if (firstCardUncovered.GetComponent<MeshRenderer>().sharedMaterial ==   secondCardUncovered.GetComponent<MeshRenderer>().sharedMaterial)
         {
-            DestroyImmediate(primaCartaScoperta.gameObject);
-            DestroyImmediate(secondaCartaScoperta.gameObject);
-            audioSource.PlayOneShot(suonoCarteUguali, 1);
-            if (FindObjectsOfType<Carta>().Length == 0)
+            DestroyImmediate(firstCardUncovered.gameObject);
+            DestroyImmediate(secondCardUncovered.gameObject);
+            audioSource.PlayOneShot(sameCardSound, 1);
+            if (FindObjectsOfType<Card>().Length == 0)
             {
                 
                 Invoke("Victory", 1f);
@@ -124,8 +124,8 @@ public class GameManager : MonoBehaviour
             
 
             
-            primaCartaScoperta.GiraCarta();
-            secondaCartaScoperta.GiraCarta();
+            firstCardUncovered.TurnCard();
+            secondCardUncovered.TurnCard();
             
            
             
@@ -133,8 +133,8 @@ public class GameManager : MonoBehaviour
 
         }
        
-        primaCartaScoperta = null;
-        secondaCartaScoperta = null;
+        firstCardUncovered = null;
+        secondCardUncovered = null;
     }
 
     public void Victory()
